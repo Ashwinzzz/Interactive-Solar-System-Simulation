@@ -1,0 +1,36 @@
+# Unity generated folders
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/Recordings/
+
+# Local WebGL build output (ship it via itch.io / GitHub Releases instead)
+/Builds/
+
+# Unity-created helper folder
+/Data/
+
+# IDE / editor files
+/.vs/
+/.vscode/
+/.idea/
+*.csproj
+*.sln
+*.slnx
+*.suo
+*.user
+*.pidb
+*.userprefs
+*.DS_Store
+*.pdb
+*.mdb
+
+# Unity crash / log artefacts
+sysinfo.txt
+*.apk
+*.aab
+*.unitypackage

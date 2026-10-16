@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no">
+    <title>{{{ PRODUCT_NAME }}}</title>
+    <style>
+      html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; }
+      #unity-container { position: fixed; inset: 0; }
+      #unity-canvas { width: 100%; height: 100%; display: block; background: #000; }
+      #unity-loading { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+                       background: radial-gradient(ellipse at center, #07101f 0%, #000 70%); color: #cfe6ff; font-family: system-ui, Arial, sans-serif; }
+      #unity-loading h1 { font-weight: 700; letter-spacing: 0.35em; font-size: clamp(22px, 4vw, 48px); margin: 0 0 8px 0; text-indent: 0.35em; }
+      #unity-loading p { margin: 0 0 28px 0; color: #7fb4ff; font-size: clamp(12px, 1.6vw, 18px); letter-spacing: 0.12em; }
+      #unity-bar { width: min(420px, 70vw); height: 6px; background: rgba(120, 170, 255, 0.18); border-radius: 3px; overflow: hidden; }
+      #unity-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #4aa3ff, #bfe0ff); }
+      #unity-pct { margin-top: 12px; font-size: 13px; color: #8fb6e8; }
+      #unity-warning { position: absolute; left: 50%; top: 5%; transform: translate(-50%); background: white; padding: 10px; display: none; z-index: 5; }
+      #unity-fullscreen { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); padding: 7px 16px; font: 600 13px system-ui, Arial, sans-serif;
+                          color: #dbeaff; background: rgba(8, 18, 38, 0.72); border: 1px solid rgba(110, 170, 255, 0.6); border-radius: 4px;
+                          cursor: pointer; display: none; letter-spacing: 0.06em; z-index: 3; }
+      #unity-fullscreen:hover { background: rgba(40, 80, 150, 0.8); }
+    </style>
+  </head>
+  <body>
+    <div id="unity-container">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+      <div id="unity-loading">
+        <h1>SOLAR SYSTEM</h1>
+        <p>Loading the cosmos&hellip;</p>
+        <div id="unity-bar"><div id="unity-bar-fill"></div></div>
+        <div id="unity-pct">0%</div>
+      </div>
+      <div id="unity-warning"></div>
+      <button id="unity-fullscreen" type="button">FULLSCREEN</button>
+    </div>
+    <script>
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loading = document.querySelector("#unity-loading");
+      var barFill = document.querySelector("#unity-bar-fill");
+      var pct = document.querySelector("#unity-pct");
+      var fsButton = document.querySelector("#unity-fullscreen");
+
+      function unityShowBanner(msg, type) {
+        var banner = document.querySelector("#unity-warning");
+        function update() { banner.style.display = banner.children.length ? "block" : "none"; }
+        var div = document.createElement("div");
+        div.innerHTML = msg;
+        banner.appendChild(div);
+        if (type == "error") div.style = "background: red; color: white; padding: 10px;";
+        else {
+          if (type == "warning") div.style = "background: yellow; padding: 10px;";
+          setTimeout(function () { banner.removeChild(div); update(); }, 5000);
+        }
+        update();
+      }
+
+      var buildUrl = "Build";
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+        frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+        codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+        streamingAssetsUrl: "StreamingAssets",
+        fullscreenElementID: "unity-container",
+        companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
+        productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
+        productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
+        showBanner: unityShowBanner,
+        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2)
+      };
+
+      var script = document.createElement("script");
+      script.src = buildUrl + "/{{{ LOADER_FILENAME }}}";
+      script.onload = function () {
+        createUnityInstance(canvas, config, function (progress) {
+          barFill.style.width = (100 * progress) + "%";
+          pct.textContent = Math.round(100 * progress) + "%";
+        }).then(function (unityInstance) {
+          loading.style.display = "none";
+          fsButton.style.display = "block";
+          fsButton.onclick = function () { unityInstance.SetFullscreen(1); };
+          canvas.focus();
+        }).catch(function (message) { alert(message); });
+      };
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>
