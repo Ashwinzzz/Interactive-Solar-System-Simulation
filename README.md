@@ -95,7 +95,7 @@ docs/screenshots/   Images used in this README
 
 ## ▶️ Play it
 
-- **In the browser:** *add your itch.io link here once the game is published.*
+- **In the browser:** [*add your itch.io link here once the game is published.*](https://ashwinzzz.itch.io/solar-system)
 - **Locally:** download the WebGL build zip, unzip it, and serve the folder with any local web server (browsers block WebGL pages opened straight from disk). For example, with Node.js:
   ```bash
   npx serve .
